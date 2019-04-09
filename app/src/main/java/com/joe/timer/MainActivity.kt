@@ -9,7 +9,8 @@ import android.os.CountDownTimer
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.joe.timer.utils.PreferenceUtility
+import com.joe.timer.utils.NotificationUtil
+import com.joe.timer.utils.PreferenceUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         removeAlarm(this)
 
-        // TODO: Hide notification
+        NotificationUtil.hideTimerNotification(this)
     }
 
     override fun onPause() {
@@ -62,18 +63,18 @@ class MainActivity : AppCompatActivity() {
         if (timerState == TimerState.Running) {
             timer.cancel()
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
-            // TODO: Show notification
+            NotificationUtil.showTimerRunning(this, wakeUpTime)
         } else if (timerState == TimerState.Paused) {
-            // TODO: Show notification
+            NotificationUtil.showTimerPaused(this)
         }
 
-        PreferenceUtility.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
-        PreferenceUtility.setSecondsRemaining(secondsRemaining, this)
-        PreferenceUtility.setTimerState(timerState, this)
+        PreferenceUtil.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
+        PreferenceUtil.setSecondsRemaining(secondsRemaining, this)
+        PreferenceUtil.setTimerState(timerState, this)
     }
 
     private fun initTimer() {
-        timerState = PreferenceUtility.getTimerState(this)
+        timerState = PreferenceUtil.getTimerState(this)
 
         if (timerState == TimerState.Stopped) {
             setNewTimerLength()
@@ -82,12 +83,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         secondsRemaining = if (timerState == TimerState.Running || timerState == TimerState.Paused) {
-            PreferenceUtility.getSecondsRemaining(this)
+            PreferenceUtil.getSecondsRemaining(this)
         } else {
             timerLengthSeconds
         }
 
-        val alarmSetTime = PreferenceUtility.getAlarmSetTime(this)
+        val alarmSetTime = PreferenceUtil.getAlarmSetTime(this)
         if (alarmSetTime > 0) {
             secondsRemaining -= nowSeconds - alarmSetTime
         }
@@ -110,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
         progress_countdown.progress = 0
 
-        PreferenceUtility.setSecondsRemaining(timerLengthSeconds, this)
+        PreferenceUtil.setSecondsRemaining(timerLengthSeconds, this)
 
         secondsRemaining = timerLengthSeconds
 
@@ -134,13 +135,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNewTimerLength() {
-        val lengthInMinutes = PreferenceUtility.getTimerLength(this)
+        val lengthInMinutes = PreferenceUtil.getTimerLength(this)
         timerLengthSeconds = lengthInMinutes * 60L
         progress_countdown.max = timerLengthSeconds.toInt()
     }
 
     private fun setPreviousTimerLength() {
-        timerLengthSeconds = PreferenceUtility.getPreviousTimerLengthSeconds(this)
+        timerLengthSeconds = PreferenceUtil.getPreviousTimerLengthSeconds(this)
         progress_countdown.max = timerLengthSeconds.toInt()
     }
 
@@ -202,7 +203,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(context, TimerExpiredReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
-            PreferenceUtility.setAlarmSetTime(nowSeconds, context)
+            PreferenceUtil.setAlarmSetTime(nowSeconds, context)
             return wakeUpTime
         }
 
@@ -211,7 +212,7 @@ class MainActivity : AppCompatActivity() {
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.cancel(pendingIntent)
-            PreferenceUtility.setAlarmSetTime(0, context)
+            PreferenceUtil.setAlarmSetTime(0, context)
         }
 
         val nowSeconds: Long

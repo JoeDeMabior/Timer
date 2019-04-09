@@ -4,7 +4,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.joe.timer.MainActivity
 
-class PreferenceUtility {
+class PreferenceUtil {
     companion object {
         fun getTimerLength(context: Context): Int {
             // Placeholder
