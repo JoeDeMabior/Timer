@@ -11,9 +11,9 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
-import com.joe.timer.MainActivity
+import com.joe.timer.ui.MainActivity
 import com.joe.timer.R
-import com.joe.timer.TimerNotificationActionReceiver
+import com.joe.timer.receivers.TimerNotificationActionReceiver
 import com.joe.timer.constants.AppConstants
 import java.text.SimpleDateFormat
 import java.util.*

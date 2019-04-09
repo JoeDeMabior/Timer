@@ -2,7 +2,7 @@ package com.joe.timer.utils
 
 import android.content.Context
 import android.preference.PreferenceManager
-import com.joe.timer.MainActivity
+import com.joe.timer.ui.MainActivity
 
 class PreferenceUtil {
     companion object {

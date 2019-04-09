@@ -1,4 +1,4 @@
-package com.joe.timer
+package com.joe.timer.ui
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -9,6 +9,8 @@ import android.os.CountDownTimer
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import com.joe.timer.R
+import com.joe.timer.receivers.TimerExpiredReceiver
 import com.joe.timer.utils.NotificationUtil
 import com.joe.timer.utils.PreferenceUtil
 import kotlinx.android.synthetic.main.activity_main.*
@@ -62,7 +64,11 @@ class MainActivity : AppCompatActivity() {
 
         if (timerState == TimerState.Running) {
             timer.cancel()
-            val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
+            val wakeUpTime = setAlarm(
+                this,
+                nowSeconds,
+                secondsRemaining
+            )
             NotificationUtil.showTimerRunning(this, wakeUpTime)
         } else if (timerState == TimerState.Paused) {
             NotificationUtil.showTimerPaused(this)
